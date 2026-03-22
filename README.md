@@ -1,8 +1,88 @@
 # Search Agent
 
-一个基于 ReAct 模式的智能搜索助手，能够根据提供的网页搜索接口获取信息并回答用户的问题。
+<p align="center">
+  <em>一个简洁易懂的 ReAct 智能搜索助手，适合初学者学习 AI Agent 开发</em>
+</p>
 
-## 项目结构
+<p align="center">
+  <a href="https://www.python.org/">
+    <img src="https://img.shields.io/badge/Python-3.8%2B-blue?logo=python&logoColor=white" alt="Python Version">
+  </a>
+  <a href="https://github.com/zlj-cs/search-agent/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
+  </a>
+  <a href="https://github.com/zlj-cs/search-agent/stargazers">
+    <img src="https://img.shields.io/github/stars/zlj-cs/search-agent?style=social" alt="GitHub Stars">
+  </a>
+</p>
+
+---
+
+## 🎯 项目简介
+
+Search Agent 是一个基于 **ReAct (Reasoning + Acting)** 模式的智能搜索助手。它能通过搜索网络、访问网页、执行 Python 代码来回答用户问题，并输出结构化的答案（包含引用来源和证据）。
+
+**适合人群**：想要学习 AI Agent 开发的初学者
+
+**核心特点**：
+- 📖 **代码结构清晰**：模块化设计，注释详细，易于理解
+- 🔧 **三种工具**：搜索、网页访问、Python 计算
+- 📝 **结构化输出**：答案包含引用和证据，可追溯
+- 🚀 **易于扩展**：轻松添加新工具和自定义功能
+
+---
+
+## 📸 效果演示
+
+### 数学计算
+```bash
+$ python3 run.py --question "123*456=?"
+
+============================================================
+问题: 123*456=?
+============================================================
+
+--- 第 1 轮 ---
+[工具调用] python_executor({'code': 'result = 123 * 456\nprint(result)'})
+[工具结果] 56088
+
+--- 第 2 轮 ---
+{
+  "answer": "123 × 456 = 56,088",
+  "references": [],
+  "evidence": []
+}
+```
+
+### 网络搜索
+```bash
+$ python3 run.py --question "什么是智能体？"
+
+============================================================
+问题: 什么是智能体？
+============================================================
+
+--- 第 1 轮 ---
+[工具调用] search({'query': '什么是智能体 定义'})
+
+--- 第 2 轮 ---
+[工具调用] visit({'url': 'https://...', 'goal': '获取智能体的定义'})
+
+--- 第 3 轮 ---
+{
+  "answer": "智能体（Agent）是指能够感知环境并自主采取行动以实现特定目标的实体...",
+  "references": [
+    {"url": "https://...", "title": "什么是智能体？"}
+  ],
+  "evidence": [
+    {"url": "https://...", "source": "page_content", "text": "..."}
+  ]
+}
+```
+
+---
+
+## 🏗️ 项目结构
 
 ```
 search_agent/
@@ -11,7 +91,7 @@ search_agent/
 │   └── react_agent.py      # ReAct Agent 实现
 ├── tools/                  # 工具模块
 │   ├── __init__.py
-│   ├── search.py           # 搜索工具
+│   ├── search.py           # 搜索工具 (Tavily API)
 │   ├── visit.py            # 网页访问工具
 │   └── python_interper.py  # Python 执行工具
 ├── config.yaml             # 配置文件
@@ -21,28 +101,32 @@ search_agent/
 └── README.md               # 说明文档
 ```
 
-## 功能特点
+---
 
-- **ReAct 模式**：通过推理(Reasoning)和行动(Acting)的循环来完成任务
-- **多工具支持**：
-  - `search`：网络搜索，返回搜索结果
-  - `visit`：访问网页并提取相关信息
-  - `python_executor`：执行 Python 代码进行计算
-- **结构化输出**：答案包含引用来源和证据
-- **易于扩展**：清晰的模块化设计，便于添加新工具
+## ✨ 功能特点
 
-## 环境要求
+| 功能 | 说明 |
+|------|------|
+| 🔍 **search** | 搜索网络信息，返回搜索结果（标题、URL、摘要） |
+| 🌐 **visit** | 访问指定网页，根据目标提取相关信息 |
+| 🐍 **python_executor** | 在沙箱环境中执行 Python 代码进行计算 |
+
+---
+
+## 📋 环境要求
 
 - **Python**: 3.8 或更高版本
 - **操作系统**: macOS / Linux / Windows
 
-## 环境配置
+---
+
+## 🚀 快速开始
 
 ### 1. 克隆项目
 
 ```bash
-git clone <your-repo-url>
-cd search_agent
+git clone https://github.com/zlj-cs/search-agent.git
+cd search-agent
 ```
 
 ### 2. 创建虚拟环境
@@ -87,16 +171,9 @@ tavily:
 agent:
   model: "gpt-4o"
   base_url: "https://api.openai.com/v1"
-  api_key: "your-api-key"  # 你的 OpenAI API 密钥
+  api_key: "your-api-key"  # 你的 API 密钥
   temperature: 0.0
   max_iterations: 10
-
-# Visit 工具配置（用于访问网页并总结）
-visit:
-  model: "gpt-3.5-turbo"
-  base_url: "https://api.openai.com/v1"
-  api_key: "your-api-key"  # 你的 OpenAI API 密钥
-  temperature: 0.0
 ```
 
 **获取 API 密钥：**
@@ -110,9 +187,11 @@ visit:
 python3 run.py --question "1+1=?"
 ```
 
-如果输出正确结果，说明环境配置成功！
+如果输出正确结果，说明环境配置成功！🎉
 
-## 使用方法
+---
+
+## 📖 使用方法
 
 ### 基本使用
 
@@ -124,7 +203,7 @@ python3 run.py --question "什么是智能体？"
 
 ```bash
 python3 run.py \
-    --question "什么是智能体？" \
+    --question "北京环球影城有哪些项目？" \
     --config config.yaml \
     --prompts prompts.yaml \
     --verbose \
@@ -141,7 +220,9 @@ python3 run.py \
 | `--verbose` | `-v` | 打印详细过程 | False |
 | `--output` | `-o` | 输出文件路径 | - |
 
-## 输出格式
+---
+
+## 📤 输出格式
 
 Agent 返回结构化的 JSON 答案：
 
@@ -161,36 +242,9 @@ Agent 返回结构化的 JSON 答案：
 }
 ```
 
-## 工具说明
+---
 
-### search 工具
-
-搜索网络信息，返回搜索结果（包含标题、URL和摘要）。
-
-```python
-# 工具调用格式
-{"name": "search", "arguments": {"query": "搜索关键词"}}
-```
-
-### visit 工具
-
-访问指定网页，根据目标提取相关信息。
-
-```python
-# 工具调用格式
-{"name": "visit", "arguments": {"url": "网页URL", "goal": "访问目标"}}
-```
-
-### python_executor 工具
-
-在沙箱环境中执行 Python 代码，用于数学计算等场景。
-
-```python
-# 工具调用格式
-{"name": "python_executor", "arguments": {"code": "```python\nprint(1+1)\n```"}}
-```
-
-## 自定义扩展
+## 🛠️ 自定义扩展
 
 ### 添加新工具
 
@@ -203,7 +257,9 @@ Agent 返回结构化的 JSON 答案：
 
 编辑 `prompts.yaml` 文件来自定义系统提示词和网页抽取提示词。
 
-## 常见问题
+---
+
+## ❓ 常见问题
 
 ### 1. pip 命令找不到
 
@@ -222,13 +278,28 @@ pip3 install -r requirements.txt
 - 检查网络是否能访问对应 API
 - 检查 `base_url` 是否正确（需要包含 `/v1` 后缀）
 
-## 注意事项
+---
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+---
+
+## ⚠️ 注意事项
 
 1. **API 密钥安全**：请勿将 API 密钥提交到版本控制系统
 2. **网络访问**：确保能够访问 Tavily API 和对应的 LLM API
 3. **成本控制**：每次查询可能产生多次 API 调用，注意控制成本
-4. **超时设置**：复杂查询可能需要较长时间，可在配置中调整 `max_iterations`
 
-## 许可证
+---
 
-MIT License
+## 📄 许可证
+
+[MIT License](LICENSE)
+
+---
+
+<p align="center">
+  如果这个项目对你有帮助，请给一个 ⭐️ Star 支持一下！
+</p>
