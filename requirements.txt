@@ -1,0 +1,13 @@
+# Search Agent 依赖包
+
+# Web 请求
+requests>=2.28.0
+
+# YAML 配置解析
+PyYAML>=6.0
+
+# Tavily 搜索 API
+tavily-python>=0.3.0
+
+# OpenAI API（可选，如果使用 OpenAI 模型）
+# openai>=1.0.0
